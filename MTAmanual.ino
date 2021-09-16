@@ -19,7 +19,10 @@ int speedPinA = 8; // Needs to be a PWM pin to be able to control motor speed
 int dir1PinB = 28;
 int dir2PinB = 29;
 int speedPinB = 9; // Needs to be a PWM pin to be able to control motor speed
- 
+int ballMotorR1 = 10;
+int ballMotorL1 = 11;
+int ballMotorR2 = 12;
+int ballMotorL2 = 13;
 void setup() {  // Setup runs once per reset
 // initialize serial communication @ 9600 baud:
  
@@ -31,6 +34,11 @@ pinMode(speedPinA,OUTPUT);
 pinMode(dir1PinB,OUTPUT);
 pinMode(dir2PinB,OUTPUT);
 pinMode(speedPinB,OUTPUT);
+pinMode(ballMotorR1, OUTPUT);
+pinMode(ballMotorR2, OUTPUT);
+pinMode(ballMotorL1, OUTPUT);
+pinMode(ballMotorL2, OUTPUT);
+
 Serial.begin(57600);
 
  //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
@@ -149,6 +157,10 @@ if(error == 1) //skip loop if no controller found
         digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2 
         digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
         digitalWrite(dir2PinB, LOW);
+        analogWrite(ballMotorR1, 0);
+        analogWrite(ballMotorR2, 0);
+        analogWrite(ballMotorL1, 0);
+        analogWrite(ballMotorL2, 0);
       }
     
       vibrate = ps2x.Analog(PSAB_BLUE);        //this will set the large motor vibrate speed based on 
@@ -175,12 +187,12 @@ if(error == 1) //skip loop if no controller found
     
     if(ps2x.Button(PSB_RED)){           //will be TRUE if button was JUST pressed
          Serial.println("Circle just pressed");
-         sangPhai();
+         thaBong();
     }
          
     if(ps2x.Button(PSB_PINK)){             //will be TRUE if button was JUST released
          Serial.println("Square just released");     
-         sangTrai();
+         layBong();
     }
     
     if(ps2x.NewButtonState(PSB_BLUE))            //will be TRUE if button was JUST pressed OR released
@@ -266,4 +278,12 @@ digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 
 analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
 digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
 digitalWrite(dir2PinB, HIGH);
+}
+void layBong() {
+  analogWrite(ballMotorR1, 0);
+  analogWrite(ballMotorL1, 60);
+}
+void thaBong() {
+  analogWrite(ballMotorR2, 0);
+  analogWrite(ballMotorL2, 60);
 }
