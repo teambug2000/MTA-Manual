@@ -10,27 +10,27 @@ int error = 0;
 byte type = 0;
 byte vibrate = 0;
  
-// Motor 1
-int dir1PinA = 26;
-int dir2PinA = 27;
-int speedPinA = 8; // Needs to be a PWM pin to be able to control motor speed
- 
-// Motor 2
-int dir1PinB = 28;
-int dir2PinB = 29;
-int speedPinB = 9; // Needs to be a PWM pin to be able to control motor speed
- 
+int motor1r = 10;
+int motor1l = 11;
+int motor2r = 12;
+int motor2l = 13;
+int motor3r = 2;
+int motor3l = 3;
+int motor4r = 4;
+int motor4l = 5;
 void setup() {  // Setup runs once per reset
 // initialize serial communication @ 9600 baud:
  
 //Define L298N Dual H-Bridge Motor Controller Pins
  
-pinMode(dir1PinA,OUTPUT);
-pinMode(dir2PinA,OUTPUT);
-pinMode(speedPinA,OUTPUT);
-pinMode(dir1PinB,OUTPUT);
-pinMode(dir2PinB,OUTPUT);
-pinMode(speedPinB,OUTPUT);
+pinMode(motor1r, OUTPUT);
+pinMode(motor1l, OUTPUT);
+pinMode(motor2r, OUTPUT);
+pinMode(motor2l, OUTPUT);
+pinMode(motor3r, OUTPUT);
+pinMode(motor3l, OUTPUT);
+pinMode(motor4r, OUTPUT);
+pinMode(motor4l, OUTPUT);
 Serial.begin(57600);
 
  //CHANGES for v1.6 HERE!!! **************PAY ATTENTION*************
@@ -142,13 +142,16 @@ if(error == 1) //skip loop if no controller found
      Serial.println(ps2x.Analog(PSAB_PAD_DOWN), DEC);
      lui();
       }   
-      if (!ps2x.Button(PSB_PAD_DOWN) && !ps2x.Button(PSB_PAD_UP) && !ps2x.Button(PSB_PAD_RIGHT) && !ps2x.Button(PSB_PAD_LEFT) && !ps2x.Button(PSB_RED) && !ps2x.Button(PSB_PINK)) {
-        analogWrite(speedPinA, 0);
-        analogWrite(speedPinB, 0);
-        digitalWrite(dir1PinA, LOW); // Điều khiển động cơ A quay tiến về phía trước
-        digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2 
-        digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
-        digitalWrite(dir2PinB, LOW);
+      if (!ps2x.Button(PSB_PAD_DOWN) && !ps2x.Button(PSB_PAD_UP) && !ps2x.Button(PSB_PAD_RIGHT) && !ps2x.Button(PSB_PAD_LEFT)) {
+        analogWrite(motor1l,0);
+        analogWrite(motor1r,0);
+        analogWrite(motor2l,0);
+        analogWrite(motor2r,0);
+      }
+        analogWrite(motor3l,0);
+        analogWrite(motor3r,0);
+        analogWrite(motor4l,0);
+        analogWrite(motor4r,0);
       }
     
       vibrate = ps2x.Analog(PSAB_BLUE);        //this will set the large motor vibrate speed based on 
@@ -167,20 +170,23 @@ if(error == 1) //skip loop if no controller found
          Serial.println("L2 pressed");
         if(ps2x.Button(PSB_R2))
          Serial.println("R2 pressed");
-        if(ps2x.Button(PSB_GREEN))
-         Serial.println("Triangle pressed");
+        
          
     }   
+    if(ps2x.Button(PSB_GREEN)){
+      Serial.println("Triangle pressed");
+      thabong();
+    }
          
     
     if(ps2x.Button(PSB_RED)){           //will be TRUE if button was JUST pressed
          Serial.println("Circle just pressed");
-         sangPhai();
+         laybong1();
     }
          
     if(ps2x.Button(PSB_PINK)){             //will be TRUE if button was JUST released
          Serial.println("Square just released");     
-         sangTrai();
+         laybong2();
     }
     
     if(ps2x.NewButtonState(PSB_BLUE))            //will be TRUE if button was JUST pressed OR released
@@ -199,71 +205,47 @@ if(error == 1) //skip loop if no controller found
         Serial.println(ps2x.Analog(PSS_RX), DEC); 
     } 
     
-    
- }
+     delay(50);
+ }  
  
  
- delay(50);
-
- 
-}
 void tien(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, HIGH); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, HIGH);
+analogWrite(motor1r,100);
+analogWrite(motor1l,0);
+analogWrite(motor2r,100);
+analogWrite(motor2l,0);
 }
 void lui(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, LOW); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, HIGH);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, HIGH); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, LOW);
+analogWrite(motor1r,0);
+analogWrite(motor1l,100);
+analogWrite(motor2r,0);
+analogWrite(motor2l,100);
 }
 void trai(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, HIGH); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, HIGH); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, LOW);
+analogWrite(motor1r,100);
+analogWrite(motor1l,0);
+analogWrite(motor2r,0);
+analogWrite(motor2l,100);
 }
 void phai(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, LOW); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, HIGH);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, HIGH);
+analogWrite(motor1r,0);
+analogWrite(motor1l,100);
+analogWrite(motor2r,100);
+analogWrite(motor2l,0);
 }
-void sangTrai(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, LOW); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, HIGH);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, HIGH); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, LOW);
+void laybong1(){
+analogWrite(motor3r,0);
+analogWrite(motor3l,50);
+
 }
-void sangPhai(){
-  analogWrite(speedPinA, 200);//Đặt tốc độ motor A thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max 
-                            //Để tiết kiệm pin nên đặt chỉ số <=127 
-digitalWrite(dir1PinA, HIGH); // Điều khiển động cơ A quay tiến về phía trước
-digitalWrite(dir2PinA, LOW);  //Nếu không quay theo đúng chiều ta đảo 2 dây motor ở 2 chân OUT1, OUT2
- 
-analogWrite(speedPinB, 200);  //Đặt tốc độ motor B thông qua PWM, các chỉ số đặt từ 0-1255 tương ứng với tốc độ từ 0 đến Max  
-digitalWrite(dir1PinB, LOW); // Điều khiển động cơ B quay tiến về phía trước
-digitalWrite(dir2PinB, HIGH);
+void laybong2(){
+
+analogWrite(motor4r,80);
+analogWrite(motor4l,0);
+}
+void thabong(){
+  analogWrite(motor3r,40);
+  analogWrite(motor3l,0);
+  analogWrite(motor4r ,0);
+  analogWrite(motor4l,40);
 }
